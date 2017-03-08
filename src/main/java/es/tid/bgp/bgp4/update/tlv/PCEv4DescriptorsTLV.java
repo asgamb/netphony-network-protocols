@@ -109,7 +109,7 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 //		}
 
 		byte[] PCEipv4bytes=new byte[4];
-		System.arraycopy(this.tlv_bytes,4, PCEipv4, 0, 4);
+		System.arraycopy(this.tlv_bytes,4, PCEipv4bytes, 0, 4);
 
 		try {
 			PCEipv4=(Inet4Address)Inet4Address.getByAddress(PCEipv4bytes);
@@ -167,7 +167,8 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 	public String toString() {
 		
 		StringBuffer sb=new StringBuffer(1000);
-		
+
+		sb.append("PCE ip: "+PCEipv4.getHostAddress());
 
 		if (domainID != null)
 			sb.append("\n\t> "+domainID.toString()+"\n");

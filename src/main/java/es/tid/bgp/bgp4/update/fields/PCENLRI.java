@@ -121,8 +121,8 @@ public class PCENLRI extends LinkStateNLRI {
 
 	@Override
 	public String toString() {
-		return "NodeNLRI [protocolID=" + protocolID + ", routingUniverseIdentifier="
-				+ routingUniverseIdentifier + ", localNodeDescriptors="
+		return "PCENLRI [protocolID=" + protocolID + ", routingUniverseIdentifier="
+				+ routingUniverseIdentifier + ", PCEDescriptors="
 				+ PCEv4Descriptors.toString()+ "]";
 	}
 
