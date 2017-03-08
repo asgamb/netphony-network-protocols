@@ -80,7 +80,7 @@ public class PCENLRI extends LinkStateNLRI {
 		
 		if (PCEv4Descriptors!=null){
 			System.arraycopy(PCEv4Descriptors.getTlv_bytes(), 0, this.bytes, offset,PCEv4Descriptors.getTotalTLVLength());
-			offset=offset+PCEv4Descriptors.getTotalTLVLength();
+			//offset=offset+PCEv4Descriptors.getTotalTLVLength();
 		}
 		
 		

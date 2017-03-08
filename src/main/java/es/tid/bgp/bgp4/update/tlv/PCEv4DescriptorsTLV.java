@@ -92,6 +92,7 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 
 		byte[] bytesIPv4 = PCEipv4.getAddress();
 		System.arraycopy(bytesIPv4,0,this.tlv_bytes,offset,4);
+		offset=offset+4;
 		if (domainID != null){
 			System.arraycopy(domainID.getSubTLV_bytes(),0,this.tlv_bytes,offset,domainID.getTotalSubTLVLength());
 			//offset=offset+domainID.getTotalSubTLVLength();
@@ -109,7 +110,7 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 //		}
 
 		byte[] PCEipv4bytes=new byte[4];
-		System.arraycopy(this.tlv_bytes,4, PCEipv4bytes, 0, 4);
+		System.arraycopy(this.tlv_bytes,offset, PCEipv4bytes, 0, 4);
 
 		try {
 			PCEipv4=(Inet4Address)Inet4Address.getByAddress(PCEipv4bytes);
@@ -117,7 +118,7 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		offset=offset+4;
 		while (!fin) {
 			int subtlvType=BGP4SubTLV.getType(tlv_bytes, offset);
 			int subtlvLength=BGP4SubTLV.getTotalSubTLVLength(tlv_bytes, offset);
