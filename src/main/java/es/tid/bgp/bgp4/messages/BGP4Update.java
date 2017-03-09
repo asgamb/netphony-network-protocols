@@ -254,6 +254,12 @@ public class BGP4Update extends BGP4Message
 				nlri = new ITNodeNLRI(messageBytes, offset);
 				offset = offset + nlri.getLength();
 			}
+			if(nlri_type == NLRITypes.PCE_NLRI)
+			{
+				//PCE_NLRI
+				nlri = new PCENLRI(messageBytes, offset);
+				offset = offset + nlri.getLength();
+			}
 			if((nlri == null) && (withdrawnRoutesLength == 0))
 			{
 				log.warn("BGP4 Update without NRLI and without Withdrawn Routes");
