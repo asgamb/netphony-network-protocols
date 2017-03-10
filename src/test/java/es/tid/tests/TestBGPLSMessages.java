@@ -2,10 +2,12 @@ package es.tid.tests;
 
 import es.tid.bgp.bgp4.update.fields.LinkStateNLRI;
 import es.tid.bgp.bgp4.update.fields.NodeNLRI;
+import es.tid.bgp.bgp4.update.fields.PCENLRI;
 import es.tid.bgp.bgp4.update.fields.pathAttributes.BGP_LS_MP_Reach_Attribute;
 import es.tid.bgp.bgp4.update.fields.pathAttributes.Generic_MP_Reach_Attribute;
 import es.tid.bgp.bgp4.update.fields.pathAttributes.MP_Reach_Attribute;
 import es.tid.bgp.bgp4.update.tlv.LocalNodeDescriptorsTLV;
+import es.tid.bgp.bgp4.update.tlv.PCEv4DescriptorsTLV;
 import es.tid.bgp.bgp4.update.tlv.ProtocolIDCodes;
 import es.tid.bgp.bgp4.update.tlv.RoutingUniverseIdentifierTypes;
 import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.IGPRouterIDNodeDescriptorSubTLV;
@@ -63,6 +65,40 @@ public class TestBGPLSMessages
 
 			lsNLRIList.add(nlri1);
 
+
+			PCENLRI pceNLRI = new PCENLRI();
+			pceNLRI.setProtocolID(ProtocolIDCodes.Unknown_Protocol_ID);
+			pceNLRI.setRoutingUniverseIdentifier(RoutingUniverseIdentifierTypes.Level3Identifier);
+			//PCE descriptor
+			PCEv4DescriptorsTLV pcev4 = new PCEv4DescriptorsTLV();
+			pcev4.setPCEv4Address(nodeIPAddress);
+			pceNLRI.setPCEv4Descriptors(pcev4);
+
+			//log.info("Creating PCE Update related to domain "+domainID);
+
+			//Domain TLV
+			/*
+			PCEv4DomainTLV domTLV= new PCEv4DomainTLV();
+			AreaIDNodeDescriptorSubTLV domID =new AreaIDNodeDescriptorSubTLV();
+			Inet4Address domainIDx = (Inet4Address) Inet4Address.getByName("1.1.1.1");;
+			//log.info(domainIDx);
+			domID.setAREA_ID((domainIDx));
+			//domTLV.addAreaIDSubTLV(domID);
+
+			ArrayList<AreaIDNodeDescriptorSubTLV> list = new ArrayList<AreaIDNodeDescriptorSubTLV>();
+			list.add(domID);
+			domTLV.setAreaIDSubTLVs(list);
+			pceNLRI.setPCEv4DomainID(domTLV);
+
+			pceNLRI.encode();
+			lsNLRIList.add(pceNLRI);
+
+			NodeNLRI nlri3 = new NodeNLRI(pceNLRI.getBytes(), 0);
+			nlri3.encode();
+			lsNLRIList.add(nlri3);
+			*/
+
+
 			NodeNLRI nlri2 = new NodeNLRI(nlri1.getBytes(), 0);
 			nlri2.encode();
 			lsNLRIList.add(nlri2);
@@ -70,10 +106,15 @@ public class TestBGPLSMessages
 			bgplsmpr1.setLsNLRIList(lsNLRIList);
 			bgplsmpr1.encode();
 
+
+
 			BGP_LS_MP_Reach_Attribute bgplsmpr2 = new BGP_LS_MP_Reach_Attribute(bgplsmpr1.getBytes(), 0);
 
 			Assert.assertEquals("Both object should be equal", bgplsmpr1, bgplsmpr2);
 			Assert.assertArrayEquals("Bytes from both objetcs should be the same", bgplsmpr1.getBytes(), bgplsmpr2.getBytes());
+
+
+
 		}catch(Throwable e)
 		{
 			e.printStackTrace();

@@ -82,7 +82,8 @@ public class PCEv4DomainTLV extends BGP4TLVFormat{
 	
 	public void encode(){
 		int len = 0;
-		len= (ASSubTLVs.size()+AreaIDSubTLVs.size())*8;
+		len= len + (ASSubTLVs.size() * 8);
+		len= len + (AreaIDSubTLVs.size()*8);
 		this.setTLVValueLength(len);
 		this.setTlv_bytes(new byte[this.getTotalTLVLength()]);
 		encodeHeader();
@@ -90,6 +91,7 @@ public class PCEv4DomainTLV extends BGP4TLVFormat{
 		if (ASSubTLVs.size()>0){
 			for (AutonomousSystemNodeDescriptorSubTLV AS: ASSubTLVs) {
 				if (AS!=null) {
+					AS.encode();
 					System.arraycopy(AS.getSubTLV_bytes(), 0, this.tlv_bytes, offset, AS.getTotalSubTLVLength());
 					offset = offset + AS.getTotalSubTLVLength();
 				}
@@ -97,8 +99,16 @@ public class PCEv4DomainTLV extends BGP4TLVFormat{
 		}
 		if (AreaIDSubTLVs.size()>0){
 			for (AreaIDNodeDescriptorSubTLV Area: AreaIDSubTLVs) {
-				if (Area!=null) {
+				if ((Area!=null)) {
+					Area.encode();
+					log.info(Area.toString());
+					log.info(String.valueOf(Area.getSubTLVValueLength()));
+					log.info(this.tlv_bytes.toString());
+					log.info (String.valueOf(Area.getSubTLV_bytes()));
+					log.info (String.valueOf(Area.getSubTLVValueLength()));
+					//System.arraycopy(Area.getSubTLV_bytes(),0,tlv_bytes,offset,Area.getTotalSubTLVLength());
 					System.arraycopy(Area.getSubTLV_bytes(),0,this.tlv_bytes,offset,Area.getTotalSubTLVLength());
+
 					offset=offset+ Area.getTotalSubTLVLength();
 				}
 			}
