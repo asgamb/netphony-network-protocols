@@ -1,6 +1,7 @@
 package es.tid.bgp.bgp4.update.fields;
 
 import es.tid.bgp.bgp4.update.tlv.*;
+import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.*;
 
 /**
  *  Node NLRI Format (RFC 4271). 
@@ -105,13 +106,14 @@ public class PCENLRI extends LinkStateNLRI {
 		}
 		if (PCEv4Neigbour!=null){
 			System.arraycopy(PCEv4Neigbour.getTlv_bytes(), 0, this.bytes, offset,PCEv4Neigbour.getTotalTLVLength());
-			offset=offset+PCEv4Neigbour.getTotalTLVLength();
+			//offset=offset+PCEv4Neigbour.getTotalTLVLength();
 		}
 
 		
 	}
 	public void decode(){
 		//Decoding PCE NLRI
+		boolean fin=false;
 		int offset = 4; //Cabecera del LinkState NLRI
 		protocolID = this.bytes[offset];
 		offset=offset +1; //identifier
@@ -124,6 +126,38 @@ public class PCENLRI extends LinkStateNLRI {
 		offset = offset +8;
 
 		this.PCEv4Descriptors=new PCEv4DescriptorsTLV(this.bytes, offset);
+
+		while (!fin) {
+			int TlvType= BGP4TLVFormat.getType(this.bytes, offset);
+			int TlvLength=BGP4TLVFormat.getTotalTLVLength(this.bytes, offset);
+			switch(TlvType){
+				case PCEDescriptorsTLVTypes.PCE_DESCRIPTORS_TLV_TYPE_DOMAIN_ID:
+					PCEv4Domain = new PCEv4DomainTLV(this.bytes, offset);
+					break;
+				case PCEDescriptorsTLVTypes.PCE_DESCRIPTORS_TLV_TYPE_NEIGBOUR_ID:
+					PCEv4Neigbour = new PCEv4NeighboursTLV(this.bytes, offset);
+					break;
+				default:
+					log.debug("Local Node Descriptor subtlv Unknown, "+TlvType);
+					break;
+			}
+			offset=offset+TlvLength;
+			if (offset>=this.TotalNLRILength){
+				fin=true;
+			}
+			else{
+				log.debug("sigo leyendo NodeDescriptorsSubTLV ");
+			}
+		}
+
+
+
+
+
+
+
+
+
 	}
 
 	public int getProtocolID() {
