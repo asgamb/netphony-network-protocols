@@ -198,11 +198,18 @@ public class PCENLRI extends LinkStateNLRI {
 
 	@Override
 	public String toString() {
-		return "PCENLRI [protocolID=" + protocolID + ", routingUniverseIdentifier="
-				+ routingUniverseIdentifier + ", PCEDescriptors="
-				+ PCEv4Descriptors.toString()+ ", PCEv4DomainTLV="
-				+ PCEv4Domain.toString()+", PCEv4NeighboursTLV="
-				+ PCEv4Neigbour.toString()+ "]";
+		StringBuffer sb=new StringBuffer(1000);
+		sb.append( "PCENLRI [protocolID=" + protocolID +
+				", routingUniverseIdentifier=" + routingUniverseIdentifier +
+				", PCEDescriptors=" + PCEv4Descriptors.toString());
+		if (PCEv4Domain!= null){
+				sb.append(PCEv4Domain.toString());
+		}
+		if (PCEv4Neigbour!= null){
+			sb.append(PCEv4Neigbour.toString());
+		}
+
+		return sb.toString();
 	}
 
 	public long getRoutingUniverseIdentifier() {
