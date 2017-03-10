@@ -89,14 +89,18 @@ public class PCEv4DomainTLV extends BGP4TLVFormat{
 		int offset=4;//TLV Header
 		if (ASSubTLVs.size()>0){
 			for (AutonomousSystemNodeDescriptorSubTLV AS: ASSubTLVs) {
-				System.arraycopy(AS.getSubTLV_bytes(), 0, this.tlv_bytes, offset, AS.getTotalSubTLVLength());
-				offset = offset + AS.getTotalSubTLVLength();
+				if (AS!=null) {
+					System.arraycopy(AS.getSubTLV_bytes(), 0, this.tlv_bytes, offset, AS.getTotalSubTLVLength());
+					offset = offset + AS.getTotalSubTLVLength();
+				}
 			}
 		}
 		if (AreaIDSubTLVs.size()>0){
 			for (AreaIDNodeDescriptorSubTLV Area: AreaIDSubTLVs) {
-				System.arraycopy(Area.getSubTLV_bytes(),0,this.tlv_bytes,offset,Area.getTotalSubTLVLength());
-				offset=offset+ Area.getTotalSubTLVLength();
+				if (Area!=null) {
+					System.arraycopy(Area.getSubTLV_bytes(),0,this.tlv_bytes,offset,Area.getTotalSubTLVLength());
+					offset=offset+ Area.getTotalSubTLVLength();
+				}
 			}
 		}
 
