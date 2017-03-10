@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d2713d36-9ec4-4b9d-bc60-74b0751349f5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/es/tid/bgp/bgp4/update/tlv/PCEv4DomainTLV.java" afterPath="$PROJECT_DIR$/src/main/java/es/tid/bgp/bgp4/update/tlv/PCEv4DomainTLV.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/es/tid/tests/TestBGPLSMessages.java" afterPath="$PROJECT_DIR$/src/test/java/es/tid/tests/TestBGPLSMessages.java" />
-    </list>
+    <list default="true" id="d2713d36-9ec4-4b9d-bc60-74b0751349f5" name="Default" comment="" />
     <ignored path="network-protocols.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/target/" />
