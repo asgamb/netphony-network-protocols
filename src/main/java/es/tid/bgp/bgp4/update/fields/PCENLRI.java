@@ -1,7 +1,6 @@
 package es.tid.bgp.bgp4.update.fields;
 
-import es.tid.bgp.bgp4.update.tlv.PCEv4DescriptorsTLV;
-import es.tid.bgp.bgp4.update.tlv.RoutingUniverseIdentifierTypes;
+import es.tid.bgp.bgp4.update.tlv.*;
 
 /**
  *  Node NLRI Format (RFC 4271). 
@@ -40,11 +39,14 @@ public class PCENLRI extends LinkStateNLRI {
 	private int protocolID;//inicializado a 0(unknown)
 	private long routingUniverseIdentifier;
 	private PCEv4DescriptorsTLV PCEv4Descriptors;
+	//private PCEv4ScopeTLV PCEv4Scope;
+	private PCEv4DomainTLV PCEv4Domain;
+	private PCEv4NeighboursTLV PCEv4Neigbour;
+
 
 	public PCENLRI(){
 		this.setNLRIType(NLRITypes.PCE_NLRI);
 		this.setRoutingUniverseIdentifier(RoutingUniverseIdentifierTypes.Level3Identifier);
-
 	}
 
 	public PCENLRI(byte[] bytes, int offset) {
@@ -58,10 +60,21 @@ public class PCENLRI extends LinkStateNLRI {
 			PCEv4Descriptors.encode();
 			len=len+PCEv4Descriptors.getTotalTLVLength();
 		}
-		
-		
-		this.setTotalNLRILength(len); 
-		//len = len+1; //Length (1 octet, NRLI) 
+		//if (PCEv4Scope!=null){
+		//	PCEv4Scope.encode();
+		//	len=len+PCEv4Scope.getTotalTLVLength();
+		//}
+		if (PCEv4Domain!=null){
+			PCEv4Domain.encode();
+			len=len+PCEv4Domain.getTotalTLVLength();
+		}
+
+		if (PCEv4Neigbour!=null){
+			PCEv4Neigbour.encode();
+			len=len+PCEv4Neigbour.getTotalTLVLength();
+		}
+
+		this.setTotalNLRILength(len);
 		this.setLength(len);
 		this.bytes=new byte[len];
 		this.encodeHeader();
@@ -80,13 +93,25 @@ public class PCENLRI extends LinkStateNLRI {
 		
 		if (PCEv4Descriptors!=null){
 			System.arraycopy(PCEv4Descriptors.getTlv_bytes(), 0, this.bytes, offset,PCEv4Descriptors.getTotalTLVLength());
-			//offset=offset+PCEv4Descriptors.getTotalTLVLength();
+			offset=offset+PCEv4Descriptors.getTotalTLVLength();
 		}
-		
+		//if (PCEv4Scope!=null){
+		//	System.arraycopy(PCEv4Scope.getTlv_bytes(), 0, this.bytes, offset,PCEv4Scope.getTotalTLVLength());
+		//	offset=offset+PCEv4Scope.getTotalTLVLength();
+		//}
+		if (PCEv4Domain!=null){
+			System.arraycopy(PCEv4Domain.getTlv_bytes(), 0, this.bytes, offset,PCEv4Domain.getTotalTLVLength());
+			offset=offset+PCEv4Domain.getTotalTLVLength();
+		}
+		if (PCEv4Neigbour!=null){
+			System.arraycopy(PCEv4Neigbour.getTlv_bytes(), 0, this.bytes, offset,PCEv4Neigbour.getTotalTLVLength());
+			offset=offset+PCEv4Neigbour.getTotalTLVLength();
+		}
+
 		
 	}
 	public void decode(){
-		//Decoding PCENLRI
+		//Decoding PCE NLRI
 		int offset = 4; //Cabecera del LinkState NLRI
 		protocolID = this.bytes[offset];
 		offset=offset +1; //identifier
@@ -97,8 +122,6 @@ public class PCENLRI extends LinkStateNLRI {
 		//this.setRoutingUniverseIdentifier((2^32)*routingUniverseIdentifieraux1+routingUniverseIdentifieraux2);
 		this.setRoutingUniverseIdentifier((routingUniverseIdentifieraux1 <<32)&0xFFFFFFFF00000000L | routingUniverseIdentifieraux2);
 		offset = offset +8;
-		//byte[] ip=new byte[4];
-		//System.arraycopy(this.bytes,offset, ip, 0, 4);
 
 		this.PCEv4Descriptors=new PCEv4DescriptorsTLV(this.bytes, offset);
 	}
@@ -119,11 +142,33 @@ public class PCENLRI extends LinkStateNLRI {
 		this.PCEv4Descriptors = PCEDescriptors;
 	}
 
+	public PCEv4DomainTLV getPCEv4DomainID() {
+		return PCEv4Domain;
+	}
+
+	public void setPCEv4DomainID(PCEv4DomainTLV PCEDomainID) {
+		this.PCEv4Domain = PCEDomainID;
+	}
+
+	public PCEv4NeighboursTLV getPCEv4NeighbourID() {
+		return PCEv4Neigbour;
+	}
+
+	public void setPCEv4NeighbourID(PCEv4NeighboursTLV PCENeighbourID) {
+		this.PCEv4Neigbour = PCENeighbourID;
+	}
+
+
+
+
+
 	@Override
 	public String toString() {
 		return "PCENLRI [protocolID=" + protocolID + ", routingUniverseIdentifier="
 				+ routingUniverseIdentifier + ", PCEDescriptors="
-				+ PCEv4Descriptors.toString()+ "]";
+				+ PCEv4Descriptors.toString()+ ", PCEv4DomainTLV="
+				+ PCEv4Domain.toString()+", PCEv4NeighboursTLV="
+				+ PCEv4Neigbour.toString()+ "]";
 	}
 
 	public long getRoutingUniverseIdentifier() {

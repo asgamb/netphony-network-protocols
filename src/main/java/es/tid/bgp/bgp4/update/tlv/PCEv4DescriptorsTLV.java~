@@ -1,5 +1,7 @@
 package es.tid.bgp.bgp4.update.tlv;
 
+import es.tid.bgp.bgp4.update.tlv.node_link_prefix_descriptor_subTLVs.*;
+
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
@@ -53,7 +55,7 @@ import java.net.UnknownHostException;
  */
 /**
  *
- * @author Andrea and Ajmal
+ * @author Andrea & Ajmal
  *
  */
 
@@ -62,14 +64,18 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 
 
 	public static final int PCE_Descriptors_TLV = 1000; //to be verified
+
 	private Inet4Address PCEipv4 = null;
+	private PCEDomainSubTLV domainsubtlv;
+	private PCENeigbourSubTLV neigboursubtlv;
+
 
 
 
 
 	public PCEv4DescriptorsTLV(){
 		super();
-		this.setTLVType(PCE_Descriptors_TLV);
+		this.setTLVType(PCEv4DescriptorsTLV.PCE_Descriptors_TLV);
 	}
 
 
@@ -77,10 +83,21 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 		super(bytes, offset);
 		decode();
 	}
-
-	public void encode(){
-
+	
+	public void encode(){	
+		
 		int len = 4;//Header TLV
+
+		if (domainsubtlv != null){
+			domainsubtlv.encode();
+			len = len + domainsubtlv.getTotalSubTLVLength();
+		}
+
+		if (neigboursubtlv != null){
+			neigboursubtlv.encode();
+			len = len + neigboursubtlv.getTotalSubTLVLength(); //Variable SubTLV Length
+		}
+
 		this.setTLVValueLength(len);
 		this.setTlv_bytes(new byte[this.getTotalTLVLength()]);
 
@@ -89,13 +106,26 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 
 		byte[] bytesIPv4 = PCEipv4.getAddress();
 		System.arraycopy(bytesIPv4,0,this.tlv_bytes,offset,4);
-		//offset=offset+4;// 4-Byte counts for the Header
+		offset=offset+4;// 4-Byte counts for the Header
+
+
+		if (domainsubtlv != null){
+
+			System.arraycopy(domainsubtlv.getTotalSubTLVLength(),0,this.tlv_bytes,offset,domainsubtlv.getTotalSubTLVLength());
+			offset=offset+domainsubtlv.getTotalSubTLVLength();
+		}
+
+		if (neigboursubtlv != null){
+			// The Length of this TLV is variable
+			System.arraycopy(neigboursubtlv.getTotalSubTLVLength(),0,this.tlv_bytes,offset,neigboursubtlv.getTotalSubTLVLength());
+		}
 
 	}
-
-
+	
+	
 	public void decode(){
 		//Decoding PCE DescriptorsTLV
+		boolean fin=false;
 		int offset=4;//4-Bytes for Header
 
 
@@ -108,9 +138,59 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//offset=offset+4;// 4-Byte counts for PCEipv4 Length
+		offset=offset+4;// 4-Byte counts for PCEipv4 Length
+		while (!fin) {
+			int subtlvType=BGP4SubTLV.getType(tlv_bytes, offset);
+			int subtlvLength=BGP4SubTLV.getTotalSubTLVLength(tlv_bytes, offset);
 
+
+			switch(subtlvType) {
+
+				case PCEDescriptorsSubTLVTypes.PCE_DESCRIPTORS_SUBTLV_TYPE_Area_ID:
+					domainsubtlv = new PCEDomainSubTLV(this.tlv_bytes, offset);
+					break;
+
+				case PCEDescriptorsSubTLVTypes.PCE_DESCRIPTORS_SUBTLV_TYPE_Neighbor_PCE:
+					neigboursubtlv = new PCENeigbourSubTLV(this.tlv_bytes, offset);
+					break;
+
+				default:
+					log.debug("Local Node Descriptor subtlv Unknown, "+subtlvType);
+					break;
+			}
+			offset=offset+subtlvLength;
+			if (offset>=this.TLVValueLength){
+				fin=true;
+			}
+			else{
+				log.debug("sigo leyendo NodeDescriptorsSubTLV ");
+			}
+		}
 	}
+
+
+
+	public PCEDomainSubTLV getDomainID() {
+		return domainsubtlv;
+	}
+
+
+	public void setDomainID(PCEDomainSubTLV Domain_subtlv) {
+		domainsubtlv = Domain_subtlv;
+	}
+
+	public PCENeigbourSubTLV getNeigbourID() {
+		return neigboursubtlv;
+	}
+
+
+	public void setNeigbourID(PCEDomainSubTLV neigbour_subtlv) {
+		neigboursubtlv = neigbour_subtlv;
+	}
+
+
+
+
 
 	public Inet4Address getPCEv4Address() {
 		return PCEipv4;
@@ -124,14 +204,20 @@ public class PCEv4DescriptorsTLV extends BGP4TLVFormat{
 
 	@Override
 	public String toString() {
-
+		
 		StringBuffer sb=new StringBuffer(1000);
 
 		sb.append("PCE ip: "+PCEipv4.getHostAddress());
 
+		if (domainsubtlv != null)
+			sb.append("\n\t> "+domainsubtlv.toString()+"\n");
 
+		if (neigboursubtlv != null)
+			sb.append("\n\t> "+neigboursubtlv.toString()+"\n");
+
+		
 		return sb.toString();
 	}
-
-
+	
+	
 }
