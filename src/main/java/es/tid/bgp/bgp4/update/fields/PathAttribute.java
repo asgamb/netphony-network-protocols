@@ -74,20 +74,20 @@ public abstract class PathAttribute extends BGP4Object {
 	
 	public PathAttribute(byte []bytes, int offset){
 
-		//Atribute Flags
+		      //Attribute Flags
 		optionalBit=(bytes[offset]&0x80)==0x80;
 		transitiveBit = (bytes[offset]&0x40)==0x40;
 		partialBit =(bytes[offset]&0x20)==0x20;
 		extendedLengthBit = (bytes[offset]&0x10)==0x10;
 		
-		//Type Code
+		        //Type Code
 		typeCode = bytes[offset+1]&0xFF;
 		
-		if (extendedLengthBit){//Attribute Length is two octects
+		if (extendedLengthBit){//Attribute Length is two octets
 			mandatoryLength=4;
 			pathAttributeLength=((((int)bytes[offset+2]&0xFF)<<8)& 0xFF00) |  ((int)bytes[offset+3] & 0xFF);
 		}
-		else //It is one octec
+		else //It is one octet
 			pathAttributeLength =  bytes[offset+2]&0xFF;
 		this.length= pathAttributeLength+ mandatoryLength;
 		this.bytes=new byte[this.length];

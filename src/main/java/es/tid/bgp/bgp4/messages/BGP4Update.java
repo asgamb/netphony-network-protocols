@@ -199,14 +199,21 @@ public class BGP4Update extends BGP4Message
 				{
 					AS_Path_Attribute as_Path_Attribute = new AS_Path_Attribute(messageBytes, offset);
 					pathAttributes.add(as_Path_Attribute);
-				} else if((attribute_typeCode == PathAttributesTypeCode.PATH_ATTRIBUTE_TYPECODE_BGP_LS_ATTRIBUTE) ||
+				}
+
+				else if(attribute_typeCode == PathAttributesTypeCode.PATH_ATTRIBUTE_TYPECODE_LOCAL_PREF)
+				{
+					LOCAL_PREF_Attribute as_PREF_Attribute = new LOCAL_PREF_Attribute(messageBytes, offset);
+					pathAttributes.add(as_PREF_Attribute);
+				}
+				else if((attribute_typeCode == PathAttributesTypeCode.PATH_ATTRIBUTE_TYPECODE_BGP_LS_ATTRIBUTE) ||
 						(attribute_typeCode == PathAttributesTypeCode.PATH_ATTRIBUTE_TYPECODE_BGP_LS_ATTRIBUTE_LEGACY))
 				{
 					LinkStateAttribute linkState_Attribute = new LinkStateAttribute(messageBytes, offset);
 					pathAttributes.add(linkState_Attribute);
 				} else if(attribute_typeCode == PathAttributesTypeCode.PATH_ATTRIBUTE_TYPECODE_MP_REACH_NLRI)
 				{
-					//PATH_ATTRIBUTE_TYPECODE_MP_REACH_NLRI
+					//PATH_ATTRIBUTE_TYPE CODE_MP_REACH_NLRI
 					int afi = MP_Reach_Attribute.getAFI(messageBytes, offset);
 					if(afi == AFICodes.AFI_BGP_LS)
 					{
