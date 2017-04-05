@@ -40,7 +40,7 @@ public class OriginAttribute extends PathAttribute{
 	}
 	public OriginAttribute(byte []bytes, int offset){
 		super(bytes, offset);
-		decode(bytes,offset+mandatoryLength);		
+		decode(bytes,offset);
 	}
 	@Override
 	public void encode() {

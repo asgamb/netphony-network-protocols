@@ -17,6 +17,8 @@ public class PathAttributesTypeCode {
 	public final static int PATH_ATTRIBUTE_TYPECODE_MULTI_EXIT_DISC = 4;
 	//LOCAL_PREF (Type Code 5):
 	public final static int PATH_ATTRIBUTE_TYPECODE_LOCAL_PREF = 5;
+
+
 	//ATOMIC_AGGREGATE (Type Code 6):
 	public final static int PATH_ATTRIBUTE_TYPECODE_ATOMIC_AGGREGATE=6;
 	//AGGREGATOR (Type Code 7)
