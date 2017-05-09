@@ -41,12 +41,15 @@ public class BGP_LS_MP_Reach_Attribute extends MP_Reach_Attribute {
 			}else if(type == NLRITypes.IT_Node_NLRI)
 			{
 				tempNLri = new ITNodeNLRI(bytes, offset2);
+			} else if(type == NLRITypes.Slice_NLRI)
+			{
+				tempNLri = new SliceNLRI(bytes, offset2);
 			} else if(type == NLRITypes.Prefix_v4_NLRI)
 			{
 				tempNLri = new PrefixNLRI(bytes, offset2);
 			} else
 			{
-				log.warn("UNKNOWN_NLRI: " + type);
+				System.out.println("UNKNOWN_NLRI: " + type);
 				continue;
 			}
 			offset2 += tempNLri.getTotalNLRILength();

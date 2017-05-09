@@ -209,6 +209,7 @@ public class BGP4Update extends BGP4Message
 					//PATH_ATTRIBUTE_TYPECODE_MP_REACH_NLRI
 					int afi = MP_Reach_Attribute.getAFI(messageBytes, offset);
 					if(afi == AFICodes.AFI_BGP_LS)
+
 					{
 						BGP_LS_MP_Reach_Attribute blsra = new BGP_LS_MP_Reach_Attribute(messageBytes, offset);
 						pathAttributes.add(blsra);
@@ -252,6 +253,12 @@ public class BGP4Update extends BGP4Message
 			{
 				//ITNode_NLRI
 				nlri = new ITNodeNLRI(messageBytes, offset);
+				offset = offset + nlri.getLength();
+			}
+			if(nlri_type == NLRITypes.Slice_NLRI)
+			{
+				//Slice_NLRI
+				nlri = new SliceNLRI(messageBytes, offset);
 				offset = offset + nlri.getLength();
 			}
 			if((nlri == null) && (withdrawnRoutesLength == 0))
